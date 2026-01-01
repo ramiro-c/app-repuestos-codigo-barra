@@ -171,6 +171,175 @@
             width: 24px;
             height: 24px;
         }
+        .cart-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e5e7eb;
+        }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .cart-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e40af;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cart-items {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+        }
+        .cart-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-item-info {
+            flex: 1;
+        }
+        .cart-item-name {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+        .cart-item-details {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .cart-item-price {
+            font-weight: 700;
+            color: #059669;
+            font-size: 1.125rem;
+            margin-right: 1rem;
+        }
+        .btn-remove {
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background 0.3s;
+        }
+        .btn-remove:hover {
+            background: #dc2626;
+        }
+        .btn-clear {
+            background: #f59e0b;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-clear:hover {
+            background: #d97706;
+        }
+        .cart-summary {
+            background: #f0f9ff;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+        .summary-row.total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e40af;
+            padding-top: 0.75rem;
+            border-top: 2px solid #3b82f6;
+            margin-top: 0.75rem;
+        }
+        .summary-label {
+            color: #374151;
+        }
+        .summary-value {
+            font-weight: 600;
+            color: #059669;
+        }
+        .summary-value.total {
+            color: #1e40af;
+        }
+        .discount-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #cbd5e1;
+        }
+        .discount-section-standalone {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .discount-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+        .discount-input {
+            width: 100px;
+            padding: 0.5rem;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .discount-label {
+            font-weight: 600;
+            color: #374151;
+            white-space: nowrap;
+        }
+        .discount-amount {
+            color: #dc2626;
+            font-weight: 600;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        input[type="number"] {
+            padding: 0.75rem;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
     </style>
 </head>
 <body>
@@ -211,11 +380,53 @@
         </div>
 
         <div id="resultBox" style="display:none;"></div>
+
+        <div class="discount-section-standalone" id="discountSection">
+            <div class="discount-input-wrapper">
+                <label class="discount-label">Descuento por pago en efectivo:</label>
+                <input type="number" id="discountInput" class="discount-input" min="0" max="100" value="0" placeholder="0">
+                <span>%</span>
+            </div>
+        </div>
+
+        <div class="cart-section" id="cartSection" style="display:none;">
+            <div class="cart-header">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <h2 class="cart-title">
+                        🛒 Carrito de Compras
+                    </h2>
+                    <span id="itemCount" style="font-weight: 600; color: #6b7280;">0 productos</span>
+                </div>
+                <button class="btn-clear" id="clearCartBtn">
+                    🗑️ Vaciar Carrito
+                </button>
+            </div>
+            
+            <div class="cart-items" id="cartItems">
+                <div class="empty-cart">El carrito está vacío</div>
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal:</span>
+                    <span class="summary-value" id="subtotal">$ 0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Descuento:</span>
+                    <span class="discount-amount" id="discountAmount">-$ 0.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span class="summary-label">Total:</span>
+                    <span class="summary-value total" id="total">$ 0.00</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         let excelData = null;
         let headers = [];
+        let cart = [];
 
         const fileInput = document.getElementById('fileInput');
         const barcodeInput = document.getElementById('barcodeInput');
@@ -223,6 +434,13 @@
         const fileName = document.getElementById('fileName');
         const fileNameText = document.getElementById('fileNameText');
         const resultBox = document.getElementById('resultBox');
+        const cartSection = document.getElementById('cartSection');
+        const cartItems = document.getElementById('cartItems');
+        const itemCount = document.getElementById('itemCount');
+        const subtotalEl = document.getElementById('subtotal');
+        const discountInput = document.getElementById('discountInput');
+        const discountAmount = document.getElementById('discountAmount');
+        const totalEl = document.getElementById('total');
 
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -246,6 +464,7 @@
                     resultBox.style.display = 'none';
                     barcodeInput.value = '';
                     barcodeInput.focus();
+                    document.getElementById('discountSection').style.display = 'flex';
                 }
             };
             reader.readAsArrayBuffer(file);
@@ -291,9 +510,76 @@
 
             if (found) {
                 showResult(true, resultRow, rowIndex + 1, columnIndex);
+                addToCart(resultRow);
+                barcodeInput.value = '';
+                barcodeInput.focus();
             } else {
                 showResult(false, 'Código de barras no encontrado');
             }
+        }
+
+        function addToCart(row) {
+            const code = row[0] || '-';
+            const barcode = row[1] || '-';
+            const name = row[2] || '-';
+            const price = parseFloat(row[row.length - 1]) || 0;
+
+            const cartItem = {
+                id: Date.now() + Math.random(),
+                code: code,
+                barcode: barcode,
+                name: name,
+                price: price
+            };
+
+            cart.push(cartItem);
+            updateCart();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCart();
+        }
+
+        function updateCart() {
+            if (cart.length === 0) {
+                cartSection.style.display = 'none';
+                cartItems.innerHTML = '<div class="empty-cart">El carrito está vacío</div>';
+                calculateTotal();
+                return;
+            }
+
+            cartSection.style.display = 'block';
+            itemCount.textContent = `${cart.length} ${cart.length === 1 ? 'producto' : 'productos'}`;
+
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-details">Código: ${item.code} | Barras: ${item.barcode}</div>
+                    </div>
+                    <div class="cart-item-price">$ ${item.price.toFixed(2)}</div>
+                    <button class="btn-remove" onclick="removeFromCart(${item.id})">✕ Eliminar</button>
+                </div>
+            `).join('');
+
+            calculateTotal();
+        }
+
+        function clearCart() {
+            cart = [];
+            updateCart();
+        }
+
+        function calculateTotal() {
+            const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+            const discountPercent = parseFloat(discountInput.value) || 0;
+            const discount = subtotal * (discountPercent / 100);
+            const total = subtotal - discount;
+
+            subtotalEl.textContent = `$ ${subtotal.toFixed(2)}`;
+            discountAmount.textContent = `-$ ${discount.toFixed(2)}`;
+            totalEl.textContent = `$ ${total.toFixed(2)}`;
         }
 
         function showResult(success, data, rowNumber, columnIndex) {
@@ -311,7 +597,7 @@
                 
                 resultBox.innerHTML = `
                     <div class="result-title success">
-                        ✓ ¡Código encontrado! (Fila ${rowNumber}, Columna ${columnLetter})
+                        ✓ ¡Código encontrado!
                     </div>
                     <table>
                       <tbody>
@@ -349,6 +635,13 @@
         barcodeInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') search();
         });
+
+        discountInput.addEventListener('input', calculateTotal);
+
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        clearCartBtn.addEventListener('click', clearCart);
+
+        window.removeFromCart = removeFromCart;
     </script>
 </body>
 </html>
