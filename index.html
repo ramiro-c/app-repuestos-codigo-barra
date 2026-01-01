@@ -259,10 +259,6 @@
                 return;
             }
 
-            console.log('=== INICIO DE BÚSQUEDA ===');
-            console.log('Buscando:', barcode);
-            console.log('Valor limpio a buscar:', barcode.replace(/\s+/g, ''));
-
             let found = false;
             let resultRow = null;
             let rowIndex = -1;
@@ -271,24 +267,16 @@
             // Buscar en TODAS las columnas
             for (let i = 1; i < excelData.length; i++) {
                 row = excelData[i];
-                console.log(`Fila ${i + 1}:`, row);
                 
                 // Revisar cada columna de la fila
                 for (let j = 0; j < row.length; j++) {
-                    console.log(`  - Columna ${j} (${String.fromCharCode(65 + j)}):`, row[j]);
-                    
                     if (row[j] !== undefined && row[j] !== null && row[j] !== '') {
                         // Convertir ambos valores a string y limpiar espacios
                         const cellValue = String(row[j]).trim().replace(/\s+/g, '');
                         const searchValue = barcode.replace(/\s+/g, '');
                         
-                        console.log(`    Valor en celda limpio: "${cellValue}"`);
-                        console.log(`    Valor buscado limpio: "${searchValue}"`);
-                        console.log(`    ¿Contiene? ${cellValue.includes(searchValue)}`);
-                        
                         // Búsqueda parcial: verifica si el código buscado está contenido en la celda
                         if (cellValue.includes(searchValue)) {
-                            console.log(`  ✓ ¡ENCONTRADO en fila ${i + 1}, columna ${String.fromCharCode(65 + j)}!`);
                             found = true;
                             resultRow = row;
                             rowIndex = i;
@@ -300,9 +288,6 @@
                 
                 if (found) break;
             }
-
-            console.log('=== FIN DE BÚSQUEDA ===');
-            console.log('Encontrado:', found);
 
             if (found) {
                 showResult(true, resultRow, rowIndex + 1, columnIndex);
