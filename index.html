@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Códigos de Barras</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #c7d2fe 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        h1 {
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+        .info-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        .section {
+            margin-bottom: 2rem;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        .file-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-upload {
+            background: #4f46e5;
+            color: white;
+        }
+        .btn-upload:hover {
+            background: #4338ca;
+        }
+        .btn-search {
+            background: #16a34a;
+            color: white;
+        }
+        .btn-search:hover {
+            background: #15803d;
+        }
+        .btn:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+        input[type="text"]:disabled {
+            background: #f3f4f6;
+            cursor: not-allowed;
+        }
+        .search-wrapper {
+            display: flex;
+            gap: 1rem;
+        }
+        .file-name {
+            color: #059669;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .result-box {
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        .result-success {
+            background: #d1fae5;
+            border: 2px solid #6ee7b7;
+        }
+        .result-error {
+            background: #fee2e2;
+            border: 2px solid #fca5a5;
+        }
+        .result-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .result-title.success {
+            color: #065f46;
+        }
+        .result-title.error {
+            color: #991b1b;
+        }
+        table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        tr:last-child {
+            border-bottom: none;
+        }
+        td {
+            padding: 0.75rem;
+        }
+        td:first-child {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+            width: 30%;
+        }
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Buscador de Códigos de Barras
+        </h1>
+        <p class="subtitle">Selecciona un archivo Excel y busca por código de barras</p>
+        
+        <div class="info-badge">
+            📍 Busca en todas las columnas
+        </div>
+
+        <div class="section">
+            <label>1. Seleccionar archivo Excel</label>
+            <div class="file-input-wrapper">
+                <label for="fileInput" class="btn btn-upload">
+                    📤 Elegir archivo
+                </label>
+                <input type="file" id="fileInput" accept=".xlsx,.xls">
+                <span id="fileName" class="file-name" style="display:none;">
+                    ✓ <span id="fileNameText"></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="section">
+            <label>2. Pegar código de barras</label>
+            <div class="search-wrapper">
+                <input type="text" id="barcodeInput" placeholder="Pega aquí el código de barras..." disabled>
+                <button id="searchBtn" class="btn btn-search" disabled>
+                    🔍 Buscar
+                </button>
+            </div>
+        </div>
+
+        <div id="resultBox" style="display:none;"></div>
+    </div>
+
+    <script>
+        let excelData = null;
+        let headers = [];
+
+        const fileInput = document.getElementById('fileInput');
+        const barcodeInput = document.getElementById('barcodeInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const fileName = document.getElementById('fileName');
+        const fileNameText = document.getElementById('fileNameText');
+        const resultBox = document.getElementById('resultBox');
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            fileNameText.textContent = file.name;
+            fileName.style.display = 'flex';
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+                if (jsonData.length > 0) {
+                    headers = jsonData[1];
+                    excelData = jsonData;
+                    barcodeInput.disabled = false;
+                    searchBtn.disabled = false;
+                    resultBox.style.display = 'none';
+                    barcodeInput.value = '';
+                    barcodeInput.focus();
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function search() {
+            const barcode = barcodeInput.value.trim();
+            
+            if (!excelData || !barcode) {
+                showResult(false, 'Por favor, ingrese un código de barras');
+                return;
+            }
+
+            console.log('=== INICIO DE BÚSQUEDA ===');
+            console.log('Buscando:', barcode);
+            console.log('Valor limpio a buscar:', barcode.replace(/\s+/g, ''));
+
+            let found = false;
+            let resultRow = null;
+            let rowIndex = -1;
+            let columnIndex = -1;
+            let row;
+            // Buscar en TODAS las columnas
+            for (let i = 1; i < excelData.length; i++) {
+                row = excelData[i];
+                console.log(`Fila ${i + 1}:`, row);
+                
+                // Revisar cada columna de la fila
+                for (let j = 0; j < row.length; j++) {
+                    console.log(`  - Columna ${j} (${String.fromCharCode(65 + j)}):`, row[j]);
+                    
+                    if (row[j] !== undefined && row[j] !== null && row[j] !== '') {
+                        // Convertir ambos valores a string y limpiar espacios
+                        const cellValue = String(row[j]).trim().replace(/\s+/g, '');
+                        const searchValue = barcode.replace(/\s+/g, '');
+                        
+                        console.log(`    Valor en celda limpio: "${cellValue}"`);
+                        console.log(`    Valor buscado limpio: "${searchValue}"`);
+                        console.log(`    ¿Contiene? ${cellValue.includes(searchValue)}`);
+                        
+                        // Búsqueda parcial: verifica si el código buscado está contenido en la celda
+                        if (cellValue.includes(searchValue)) {
+                            console.log(`  ✓ ¡ENCONTRADO en fila ${i + 1}, columna ${String.fromCharCode(65 + j)}!`);
+                            found = true;
+                            resultRow = row;
+                            rowIndex = i;
+                            columnIndex = j;
+                            break;
+                        }
+                    }
+                }
+                
+                if (found) break;
+            }
+
+            console.log('=== FIN DE BÚSQUEDA ===');
+            console.log('Encontrado:', found);
+
+            if (found) {
+                showResult(true, resultRow, rowIndex + 1, columnIndex);
+            } else {
+                showResult(false, 'Código de barras no encontrado');
+            }
+        }
+
+        function showResult(success, data, rowNumber, columnIndex) {
+            resultBox.style.display = 'block';
+            
+            if (success) {
+                const columnLetter = String.fromCharCode(65 + columnIndex);
+                resultBox.className = 'result-box result-success';
+                
+                // Mostrar solo posiciones 0, 1, 2 y el último elemento
+                const position0 = data[0] || '-';
+                const position1 = data[1] || '-';
+                const position2 = data[2] || '-';
+                const lastPosition = data[data.length - 1] || '-';
+                
+                resultBox.innerHTML = `
+                    <div class="result-title success">
+                        ✓ ¡Código encontrado! (Fila ${rowNumber}, Columna ${columnLetter})
+                    </div>
+                    <table>
+                      <tbody>
+                        <tr>
+                            <td>Código</td>
+                            <td>${position0}</td>
+                        </tr>
+                        <tr>
+                            <td>Código de Barras</td>
+                            <td>${position1}</td>
+                        </tr>
+                        <tr>
+                            <td>Repuesto</td>
+                            <td>${position2}</td>
+                        </tr>
+                        <tr>
+                            <td>Precio</td>
+                            <td>$ ${parseFloat(lastPosition).toFixed(2)}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                `;
+            } else {
+                resultBox.className = 'result-box result-error';
+                resultBox.innerHTML = `
+                    <div class="result-title error">
+                        ✗ No encontrado
+                    </div>
+                    <p style="color: #991b1b;">${data}</p>
+                `;
+            }
+        }
+
+        searchBtn.addEventListener('click', search);
+        barcodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') search();
+        });
+    </script>
+</body>
+</html>
