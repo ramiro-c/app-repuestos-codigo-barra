@@ -86,6 +86,14 @@
         .btn-search:hover {
             background: #15803d;
         }
+        .btn-add-cart {
+            background: #16a34a;
+            color: white;
+            margin-top: 1rem;
+        }
+        .btn-add-cart:hover {
+            background: #15803d;
+        }
         .btn:disabled {
             background: #d1d5db;
             cursor: not-allowed;
@@ -427,6 +435,7 @@
         let excelData = null;
         let headers = [];
         let cart = [];
+        let currentProduct = null;
 
         const fileInput = document.getElementById('fileInput');
         const barcodeInput = document.getElementById('barcodeInput');
@@ -509,20 +518,24 @@
             }
 
             if (found) {
+                currentProduct = resultRow;
                 showResult(true, resultRow, rowIndex + 1, columnIndex);
-                addToCart(resultRow);
-                barcodeInput.value = '';
-                barcodeInput.focus();
             } else {
+                currentProduct = null;
                 showResult(false, 'Código de barras no encontrado');
             }
         }
 
-        function addToCart(row) {
-            const code = row[0] || '-';
-            const barcode = row[1] || '-';
-            const name = row[2] || '-';
-            const price = parseFloat(row[row.length - 1]) || 0;
+        function addCurrentProductToCart() {
+            if (!currentProduct) {
+                showResult(false, 'No hay producto para agregar');
+                return;
+            }
+            
+            const code = currentProduct[0] || '-';
+            const barcode = currentProduct[1] || '-';
+            const name = currentProduct[2] || '-';
+            const price = parseFloat(currentProduct[currentProduct.length - 1]) || 0;
 
             const cartItem = {
                 id: Date.now() + Math.random(),
@@ -534,6 +547,10 @@
 
             cart.push(cartItem);
             updateCart();
+            
+            // Clear input and focus for next scan
+            barcodeInput.value = '';
+            barcodeInput.focus();
         }
 
         function removeFromCart(id) {
@@ -619,6 +636,9 @@
                         </tr>
                       </tbody>
                     </table>
+                    <button class="btn btn-add-cart" onclick="addCurrentProductToCart()">
+                        🛒 Agregar al Carrito
+                    </button>
                 `;
             } else {
                 resultBox.className = 'result-box result-error';
@@ -642,6 +662,7 @@
         clearCartBtn.addEventListener('click', clearCart);
 
         window.removeFromCart = removeFromCart;
+        window.addCurrentProductToCart = addCurrentProductToCart;
     </script>
 </body>
 </html>

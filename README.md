@@ -17,8 +17,8 @@ Aplicación web de punto de venta (POS) para buscar códigos de barras en archiv
   - Precio
 
 ### Sistema de Carrito
-- 🛒 **Carrito automático**: Los productos se agregan automáticamente al carrito al escanear
-- ➕ **Agregar productos**: Escanea códigos de barras para agregar productos al carrito
+- 🔍 **Búsqueda separada**: Busca información de repuestos sin agregar automáticamente al carrito
+- ➕ **Agregar productos manualmente**: Botón "Agregar al Carrito" para agregar productos explícitamente
 - ➖ **Eliminar productos**: Botón para eliminar productos individuales del carrito
 - 🗑️ **Vaciar carrito**: Botón para limpiar todos los productos de una vez
 - 📈 **Contador de productos**: Muestra la cantidad total de productos en el carrito
@@ -31,8 +31,9 @@ Aplicación web de punto de venta (POS) para buscar códigos de barras en archiv
 
 ### Interfaz
 - 🎨 **Diseño moderno**: Interfaz limpia y responsiva con gradientes y animaciones
-- ⚡ **Flujo optimizado**: El campo de código de barras se limpia automáticamente después de cada escaneo
+- ⚡ **Flujo optimizado**: El campo de código de barras se limpia automáticamente después de agregar al carrito
 - 👁️ **Descuento siempre visible**: El campo de descuento está siempre accesible para configuración rápida
+- 🔄 **Acciones separadas**: Búsqueda e información separadas de la acción de agregar al carrito
 
 ## Cómo usar
 
@@ -41,10 +42,17 @@ Aplicación web de punto de venta (POS) para buscar códigos de barras en archiv
 2. **Configurar descuento** (opcional): Establece el porcentaje de descuento por pago en efectivo
 
 ### Proceso de venta
+
+#### Buscar información de repuestos
 1. **Escanear código de barras**: Pega o escribe el código de barras en el campo de búsqueda
 2. **Buscar**: Haz clic en el botón "Buscar" o presiona Enter
-3. **Producto agregado**: El producto se agrega automáticamente al carrito y el campo se limpia para el siguiente escaneo
-4. **Ver totales**: El carrito muestra:
+3. **Ver información**: Se muestra la información del repuesto encontrado (Código, Código de Barras, Nombre, Precio)
+4. **Decidir**: Revisa la información antes de agregar al carrito
+
+#### Agregar productos al carrito
+1. **Agregar al carrito**: Haz clic en el botón "🛒 Agregar al Carrito" en los resultados de búsqueda
+2. **Producto agregado**: El producto se agrega al carrito y el campo de código se limpia automáticamente
+3. **Ver totales**: El carrito muestra:
    - Lista de productos agregados
    - Subtotal
    - Descuento aplicado
@@ -93,6 +101,8 @@ app-repuestos-codigo-barra/
 - Los productos se identifican por un ID único generado al agregarlos
 - El descuento se aplica sobre el subtotal de todos los productos
 - El cálculo del total se actualiza en tiempo real al modificar el descuento o el carrito
+- La búsqueda y visualización de información es independiente del carrito (no se agregan productos automáticamente)
+- Puedes buscar múltiples códigos sin agregar al carrito hasta que decidas hacerlo explícitamente
 
 ## Formato esperado del Excel
 
